@@ -1,3 +1,6 @@
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 const swaggerOptions = {
     swaggerDefinition: {
       info: {
@@ -11,11 +14,16 @@ const swaggerOptions = {
       },
       servers: [
         {
-          url: `http://localhost:${PORT}`,
-          description: 'Servidor local',
+          url: `http://localhost:4000`,
+          description: 'Servidor de desarrollo',
         },
       ],
     },
-    apis: ['app.js', 'routes/*.js'], // Incluye todos los archivos de rutas aquí
+    apis: ['index.js', 'routes/*.js'], // Incluye todos los archivos de rutas aquí
   };
-  
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+
+module.exports = {
+    swaggerUi,
+    swaggerDocs
+};

@@ -33,7 +33,7 @@ app.get('/api/detalleCarrito/:id/:productoid', DetalleCarritoController.obtenerP
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect('mongodb://98.83.127.213:27017/compras')
   .then(() => {
     console.log('Conectado a MongoDB');
   })

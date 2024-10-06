@@ -1,36 +1,12 @@
 const express = require('express');
 const axios = require('axios');
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+const { swaggerUi, swaggerDocs } = require('./swagger');
 
 const app = express();
 const PORT = 4000;
 
 app.use(express.json());
 
-const swaggerOptions = {
-  swaggerDefinition: {
-    info: {
-      title: 'API de Orquestador de Microservicios',
-      version: '1.0.0',
-      description: 'Documentación de los servicios del Orquestador de Microservicios',
-      contact: {
-        name: 'Soporte',
-        url: 'http://tu-app-soporte.com',
-      },
-    },
-    servers: [
-      {
-        url: `http://localhost:${PORT}`,
-        description: 'Servidor local',
-      },
-    ],
-  },
-  apis: ['index.js'], 
-};
-
-const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Endpoints de la API
 /**
@@ -51,6 +27,7 @@ app.get('/', (req, res) => {
  * /api/orquestador/categorias:
  *   post:
  *     summary: Crear una nueva categoría
+ *     tags: [Categorías]
  *     requestBody:
  *       required: true
  *       content:
@@ -60,10 +37,17 @@ app.get('/', (req, res) => {
  *             properties:
  *               adminId:
  *                 type: integer
+ *                 description: ID del administrador
  *               nombre:
  *                 type: string
+ *                 description: Nombre de la categoría
  *               descripcion:
  *                 type: string
+ *                 description: Descripción de la categoría
+ *             example:  // Mover el ejemplo aquí
+ *               adminId: 1
+ *               nombre: "Categoría de Prueba"
+ *               descripcion: "Descripción de la categoría de prueba."
  *     responses:
  *       200:
  *         description: Categoría creada exitosamente
@@ -72,6 +56,7 @@ app.get('/', (req, res) => {
  *       500:
  *         description: Error interno del servidor
  */
+
 app.post('/api/orquestador/categorias', async (req, res) => {
     const { adminId, nombre, descripcion } = req.body;
 
@@ -112,6 +97,7 @@ app.post('/api/orquestador/categorias', async (req, res) => {
  * /api/orquestador/producto:
  *   post:
  *     summary: Crear un nuevo producto
+ *     tags: [Productos]
  *     requestBody:
  *       required: true
  *       content:
@@ -121,16 +107,30 @@ app.post('/api/orquestador/categorias', async (req, res) => {
  *             properties:
  *               adminId:
  *                 type: integer
+ *                 description: ID del administrador
  *               nombre:
  *                 type: string
+ *                 description: Nombre del producto
  *               descripcion:
  *                 type: string
+ *                 description: Descripción del producto
  *               precio:
  *                 type: number
+ *                 format: float
+ *                 description: Precio del producto
  *               stock:
  *                 type: integer
+ *                 description: Cantidad en stock del producto
  *               categoriaId:
  *                 type: integer
+ *                 description: ID de la categoría a la que pertenece el producto
+ *             example:
+ *               adminId: 1
+ *               nombre: "Producto de Ejemplo"
+ *               descripcion: "Descripción del producto de ejemplo."
+ *               precio: 29.99
+ *               stock: 100
+ *               categoriaId: 2
  *     responses:
  *       200:
  *         description: Producto creado exitosamente
@@ -182,6 +182,7 @@ app.post('/api/orquestador/producto', async(req, res) => {
  * /api/orquestador/categoria/eliminar:
  *   delete:
  *     summary: Eliminar una categoría
+ *     tags: [Categorías]
  *     requestBody:
  *       required: true
  *       content:
@@ -191,8 +192,13 @@ app.post('/api/orquestador/producto', async(req, res) => {
  *             properties:
  *               adminId:
  *                 type: integer
+ *                 description: ID del administrador
  *               categoriaId:
  *                 type: integer
+ *                 description: ID de la categoría a eliminar
+ *             example:
+ *               adminId: 1
+ *               categoriaId: 3
  *     responses:
  *       200:
  *         description: Categoría eliminada correctamente
@@ -233,6 +239,7 @@ app.delete('/api/orquestador/categoria/eliminar/', async(req, res)=>{
  * /api/orquestador/producto/eliminar:
  *   delete:
  *     summary: Eliminar un producto
+ *     tags: [Productos]
  *     requestBody:
  *       required: true
  *       content:
@@ -242,8 +249,13 @@ app.delete('/api/orquestador/categoria/eliminar/', async(req, res)=>{
  *             properties:
  *               adminId:
  *                 type: integer
+ *                 description: ID del administrador
  *               productoId:
  *                 type: integer
+ *                 description: ID del producto a eliminar
+ *             example:
+ *               adminId: 1
+ *               productoId: 42
  *     responses:
  *       200:
  *         description: Producto eliminado correctamente
@@ -278,6 +290,8 @@ app.delete('/api/orquestador/producto/eliminar/', async(req, res)=>{
         }
     }
 });
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 
 app.listen(PORT, () => {
     console.log(`Orquestador de microservicios escuchando en el puerto ${PORT}`);
