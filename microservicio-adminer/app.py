@@ -3,13 +3,12 @@ from models import db, Administrador
 from config import Config
 from flask_swagger_ui import get_swaggerui_blueprint
 from flasgger import Swagger
-from flask_cors import CORS  # Importa CORS
+from flask_cors import CORS  
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Habilitar CORS en todas las rutas
-CORS(app)  # Permite CORS desde cualquier origen
+CORS(app)  
 
 app = Flask(__name__)
 app.config.from_object(Config)
