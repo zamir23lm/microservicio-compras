@@ -6,7 +6,10 @@ const CarritoController = require('./src/carrito/controllers/CarritoController')
 const DetalleCarritoController = require('./src/detalleCarrito/controllers/DetalleCarritoController');
 app.use(express.json()); 
 
-// Definir rutas de carrito
+app.get('/', (req, res) => {
+  res.json({ message: 'Bienvenido a mi API' });
+});
+// Rutas de carrito
 app.post('/api/carrito/postear', CarritoController.createCarrito);
 app.get('/api/carrito/all', CarritoController.obtenerTodosLosCarritos);
 app.get('/api/carrito/:id', CarritoController.obtenerCarritoPorId);
@@ -16,7 +19,7 @@ app.delete('/api/carrito/:id', CarritoController.eliminarCarrito);
 app.put('/api/carrito/detalles/:id', CarritoController.editarDetalleCarrito);
 const { swaggerUi, swaggerDocs } = require('./swagger');
 
-//Definir rutas de detalle carrito
+//Rutas de detalle carrito
 app.post('/api/detalleCarrito/postear', DetalleCarritoController.crearDetalleCarrito);
 app.put('/api/detalleCarrito/agregarProducto/:id', DetalleCarritoController.agregarProducto);
 app.get('/api/detalleCarrito/all', DetalleCarritoController.obtenerTodosLosDetallesCarrito);

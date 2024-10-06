@@ -6,11 +6,14 @@ const PORT = 4000;
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.json({ message: 'Bienvenido a mi API' });
+});
+
 app.post('/api/orquestador/categorias', async (req, res) => {
     const { adminId, nombre, descripcion } = req.body;
 
     console.log(`Recibiendo solicitud para adminId: ${adminId}, nombre: ${nombre}, descripcion: ${descripcion}`);
-
     try {
         const adminResponse = await axios.get(`http://localhost:5000/admin/${adminId}`);
         console.log(`Respuesta del servicio de administrador:`, adminResponse.data);
@@ -133,6 +136,7 @@ app.delete('/api/orquestador/producto/eliminar/', async(req, res)=>{
         }
     }
 });
+
 
 app.listen(PORT, () => {
     console.log(`Orquestador de microservicios escuchando en el puerto ${PORT}`);
