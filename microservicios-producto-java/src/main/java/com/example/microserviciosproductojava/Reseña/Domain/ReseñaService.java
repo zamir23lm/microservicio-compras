@@ -31,7 +31,7 @@ public class ReseñaService {
 
 
     @Transactional
-    public void crearReseña(PostReseñadto post) {
+    public ResponseReseñadto crearReseña(PostReseñadto post) {
         // Buscar el producto por ID
         System.out.println("dto  " + post);
         Producto producto = productoRepository.findById(post.getProductoId())
@@ -43,23 +43,20 @@ public class ReseñaService {
         reseña.setComentario(post.getComentario());
         reseña.setUsuarioId(post.getUsuarioId());
 
-        // Asignar el producto a la reseña
         reseña.setProducto(producto);
 
-        // Verificar que el producto se está enlazando correctamente
         System.out.println("Producto en la reseña: " + reseña.getProducto().getId());
 
-        // Guardar la reseña
         reseñaRepository.save(reseña);
         reseñaRepository.flush();  // Forzar sincronización
 
-        // Actualizar el producto con la nueva reseña
         if (producto.getCantidadReseñas() == null) {
             producto.setCantidadReseñas(1);
         } else {
             producto.setCantidadReseñas(producto.getCantidadReseñas() + 1);
         }
         productoRepository.save(producto);
+        return converToDto(reseña);
     }
 
 
@@ -106,7 +103,6 @@ public class ReseñaService {
         Reseña reseña = reseñaRepository.findById(reseñaId)
                 .orElseThrow(() -> new RuntimeException("Reseña no encontrada"));
 
-        // Verificar que el usuario tiene permisos para modificar la reseña
         System.out.println("UsuarioId: " + reseña.getUsuarioId());
         System.out.println("ProductoId: " + reseña.getProducto().getId());
         System.out.println("Usuariodto: " + post.getUsuariId());
@@ -114,8 +110,7 @@ public class ReseñaService {
             throw new RuntimeException("Usuario no autorizado para actualizar esta reseña");
         }
 
-        if (!reseña.getProducto().getId().equals(productoId)        // Verificar que el usuario tiene permisos para modificar la reseña
-) {
+        if (!reseña.getProducto().getId().equals(productoId)) {
             throw new RuntimeException("Reseña no encontrada para este producto");
         }
 
@@ -127,7 +122,6 @@ public class ReseñaService {
             reseña.setComentario(post.getComentario());
         }
 
-        // Guardar los cambios
         reseñaRepository.save(reseña);
     }
 

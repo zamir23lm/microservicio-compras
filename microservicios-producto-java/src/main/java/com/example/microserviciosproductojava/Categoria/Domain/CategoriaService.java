@@ -18,12 +18,18 @@ public class CategoriaService {
     @Autowired
     private CategoriaRepository categoriaRepository;
     
-    public void publicarCategoria(RequestCategoria requestCategoria) {
+    public ResponseCategoriaDto publicarCategoria(RequestCategoria requestCategoria) {
         Categoria categoria = new Categoria();
         categoria.setNombre(requestCategoria.getNombre());
         categoria.setDescripcion(requestCategoria.getDescripcion());
         categoria.setTotalProductos(0);
         categoriaRepository.save(categoria);
+        ResponseCategoriaDto responseCategoriaDto = new ResponseCategoriaDto();
+        responseCategoriaDto.setId(categoria.getId());
+        responseCategoriaDto.setNombre(categoria.getNombre());
+        responseCategoriaDto.setDescripcion(categoria.getDescripcion());
+        responseCategoriaDto.setTotalProductos(categoria.getTotalProductos());
+        return responseCategoriaDto;
     }
     
     public void actualizarCategoria(Integer id, RequestCategoria requestCategoria) {

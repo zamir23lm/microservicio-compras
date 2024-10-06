@@ -15,9 +15,8 @@ public class CategoriaController {
     private CategoriaService categoriaService;
 
     @PostMapping("/postear")
-    public ResponseEntity<Void> publicarCategoria(@RequestBody RequestCategoria requestCategoria) {
-        categoriaService.publicarCategoria(requestCategoria);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ResponseCategoriaDto> publicarCategoria(@RequestBody RequestCategoria requestCategoria) {
+        return ResponseEntity.ok(categoriaService.publicarCategoria(requestCategoria));
     }
 
     @GetMapping("/all")

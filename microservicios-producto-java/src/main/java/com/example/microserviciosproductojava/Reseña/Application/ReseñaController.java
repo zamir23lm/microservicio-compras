@@ -17,9 +17,8 @@ public class ReseñaController {
     private ReseñaService reseñaService;
 
     @PostMapping("/postear")
-    public ResponseEntity<Void> crearReseña(@RequestBody PostReseñadto postReseñadto) {
-        reseñaService.crearReseña(postReseñadto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ResponseReseñadto> crearReseña(@RequestBody PostReseñadto postReseñadto) {
+        return ResponseEntity.ok(reseñaService.crearReseña(postReseñadto));
     }
 
     @GetMapping("/producto/{productoId}")
