@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  flask-backend:
+    build: ./microservicio-adminer
+    container_name: flask-backend
+    command: gunicorn --bind 0.0.0.0:5000 app:app  
+    volumes:
+      - ./microservicio-adminer:/app 
+    ports:
+      - "5000:5000"
+    environment:
+      DB_NAME: Pedidos
+      DB_USER: root
+      DB_PASSWORD: utec
+      DB_HOST: 98.83.127.213
+      DB_PORT: 8005
+    networks:
+      - microservicios
+
+  node-backend:
+    build: ./microservicio-carrito-compra-node/carrito-compra
+    container_name: node-backend
+    command: node server.js
+    volumes:
+      - ./microservicio-carrito-compra-node/carrito-compra:/app
+    ports:
+      - "3000:3000"
+    environment:
+      DB_NAME: compras
+      DB_HOST: 98.83.127.213
+      DB_PORT: 27017
+    networks:
+      - microservicios
+
+  spring-backend:
+    build: ./microservicios-producto-java
+    container_name: spring-backend
+    command: java -jar app_productos.jar
+    volumes:
+      - ./microservicios-producto-java:/app
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_APPLICATION_NAME: microservicios-producto-java
+      DB_NAME: gestion
+      DB_USER: postgres
+      DB_PASSWORD: utec
+      DB_HOST: 98.83.127.213
+      DB_PORT: 8006
+    networks:
+      - microservicios
+
+  django-backend:
+    build: ./microservicio-pedidos
+    container_name: django-backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./microservicio-pedidos:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DB_NAME: Pedidos
+      DB_USER: root
+      DB_PASSWORD: utec
+      DB_HOST: 98.83.127.213
+      DB_PORT: 8005
+    networks:
+      - microservicios
+
+  orquestador:
+    build: ./microservicio-orquestador
+    container_name: orquestador
+    ports:
+      - "4000:4000"
+    networks:
+      - microservicios
+    depends_on:
+      - node-backend
+      - spring-backend
+      - flask-backend
+      - django-backend
+    environment:
+      - NODE_SERVICE_HOST=node-backend
+      - NODE_SERVICE_PORT=3000
+      - SPRING_SERVICE_HOST=spring-backend
+      - SPRING_SERVICE_PORT=8081
+      - FLASK_SERVICE_HOST=flask-backend
+      - FLASK_SERVICE_PORT=5000
+      - DJANGO_SERVICE_HOST=django-backend
+      - DJANGO_SERVICE_PORT=8000
+
+networks:
+  microservicios:
+    external: true
