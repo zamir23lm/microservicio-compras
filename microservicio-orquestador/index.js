@@ -42,7 +42,43 @@ app.post('/api/orquestador/categorias', async (req, res) => {
     }
 });
 
-app.post('/api/orquestador/producto', async)
+app.post('/api/orquestador/producto', async(req, res) => {
+    const {adminId, nombre, descripcion, precio, stock, categoriaId} = req.body;
+    console.log("Recibiendo informacion");
+    try{
+        const adminResponse = await axios.get(`http://localhost:5000/admin/${adminId}`)
+        console.log("Respuesta del microservicio administrador", adminResponse.data);
+        if(adminResponse.status ===200){
+            const adminData = adminResponse.body;
+            const productoResponse = await axios.post('http://localhost:8081/api/producto/postear', {
+                nombre:nombre,
+                descripcion:descripcion,
+                precio:precio,
+                stock:stock,
+                categoriaId:categoriaId
+                
+            });
+            res.status(productoResponse.status).json({
+                message:'Producto creado exitosamente',
+                data:productoResponse.data
+            });
+        }else{
+            res.status(404).json({message:'Administrador no encontradoo'});
+        }
+    }catch(error){
+        console.error('Error al buscar al administrador o al momento de crear el producto', error);
+        if (error.response) {
+            if (error.response.status === 404) {
+                res.status(404).json({ message: 'Administrador no encontrado' });
+            } else {
+                res.status(error.response.status).json({ message: 'Error en la creación del producto', error: error.message });
+            }
+        } else {
+            res.status(500).json({ message: 'Error interno en el servidor' });
+        }
+    }
+
+});
 
 
 app.listen(PORT, () => {
