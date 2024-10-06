@@ -1,0 +1,22 @@
+services:
+  spring-backend:
+    build: .
+    container_name: spring-backend
+    command: java -jar app_productos.jar
+    volumes:
+      - .:/app
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_APPLICATION_NAME: microservicios-producto-java
+      DB_NAME: gestion
+      DB_USER: postgres
+      DB_PASSWORD: utec
+      DB_HOST: 98.83.127.213
+      DB_PORT: 8006
+    networks:
+      - microservicios
+
+networks:
+  microservicios:
+    external: true

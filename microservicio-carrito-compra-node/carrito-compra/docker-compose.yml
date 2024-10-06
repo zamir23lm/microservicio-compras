@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  node-backend:
+    build: .
+    container_name: node-backend
+    command: node server.js
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_NAME=compras
+      - DB_HOST=98.83.127.213
+      - DB_PORT=27017
+    networks:
+      - microservicios
+
+networks:
+  microservicios:
+    external: true

@@ -1,0 +1,29 @@
+# Ignorar las imágenes y contenedores de Docker
+*.tar
+*.img
+docker-compose.override.yml
+.env
+
+# Ignorar los directorios y archivos de volúmenes y datos de Docker
+docker-data/
+docker-volume/
+volumes/
+logs/
+db_data/
+node_modules/
+__pycache__/
+*.pyc
+
+# Ignorar el archivo de configuración de Docker
+docker-compose.override.yml
+
+# Ignorar archivos relacionados con virtualenvs
+venv/
+.env
+
+# Ignorar archivos temporales de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar los archivos de SQLite (si los usas para desarrollo local)
+*.sqlite3

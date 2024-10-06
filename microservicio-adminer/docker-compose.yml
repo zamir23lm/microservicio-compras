@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  flask-backend:
+    build: .
+    container_name: flask-backend
+    command: gunicorn --bind 0.0.0.0:5000 app:app  
+    volumes:
+      - .:/app 
+    ports:
+      - "5000:5000"
+    environment:
+      DB_NAME: Pedidos
+      DB_USER: root
+      DB_PASSWORD: utec
+      DB_HOST: 98.83.127.213
+      DB_PORT: 8005
+    networks:
+      - microservicios
+
+networks:
+  microservicios:
+    external: true

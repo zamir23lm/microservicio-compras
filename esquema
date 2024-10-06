@@ -1,0 +1,128 @@
+Microservicio de Gestión de Usuarios y Pedidos
+---------------------------------------------------
+Usuario        Pedido       DetallePedido    
+| id          | id         | id             
+| nombre      | usuario_id | pedido_id     
+| email       | estado     | producto_id    
+| telefono    | monto_total| cantidad       
+| ...         | direccion_id | precio_unitario 
+              | ...        | ...            
+
+DireccionEnpedido_idvio
+| id
+| usuario_id
+| direccion
+| ...
+
+cd apiPedidos
+for entity in DireccionEnvio; do
+  mkdir -p $entity/{domain,application,infrastructure,dtos,exceptions}
+  touch $entity/{domain/models.py,domain/services.py}
+  touch $entity/application/controllers.py
+  touch $entity/infrastructure/repositories.py
+  touch $entity/dtos/${entity}_dto.py
+  touch $entity/exceptions/${entity}_exceptions.py
+  touch $entity/{serializers.py,urls.py,__init__.py
+done
+
+
+cd apiPedidos
+for entity in  DetallesPedido DetallesProducto; do
+  mkdir -p $entity/{domain,application,infrastructure,dtos,exceptions}
+  touch $entity/{domain/models.py,domain/services.py}
+  touch $entity/application/controllers.py
+  touch $entity/infrastructure/repositories.py
+  touch $entity/dtos/${entity}_dto.py
+  touch $entity/exceptions/${entity}_exceptions.py
+  touch $entity/{serializers.py,urls.py,__init__.py}
+done
+1. Modelo Usuario
+El modelo de Usuario puede tener los siguientes atributos adicionales:
+
+Atributo	Descripción
+id	Identificador único del usuario.
+nombre	Nombre del usuario.
+email	Correo electrónico del usuario (único).
+telefono	Número de teléfono del usuario.
+direccion	Dirección del usuario (relación con un modelo Direccion).
+fecha_registro	Fecha en la que el usuario se registró.
+es_activo	Booleano para indicar si el usuario está activo.
+es_admin	Booleano para indicar si el usuario tiene privilegios administrativos.
+
+2. Modelo Pedido
+El modelo Pedido puede ser mejorado con los siguientes atributos adicionales:
+
+Atributo	Descripción
+id	Identificador único del pedido.
+usuario_id	Relación con el modelo Usuario (quién hizo el pedido).
+estado	Estado del pedido (pendiente, procesando, enviado, entregado, cancelado, etc.).
+monto_total	Monto total del pedido (puede calcularse automáticamente).
+direccion_id	Relación con el modelo Direccion (dónde se entregará el pedido).
+fecha_pedido	Fecha en la que se realizó el pedido.
+fecha_entrega	Fecha estimada de entrega.
+metodo_envio	Método de envío (standard, express, etc.).
+comentarios	Comentarios adicionales o instrucciones del cliente.
+
+3. Modelo DetallePedido
+El modelo DetallePedido puede contener los siguientes atributos adicionales:
+
+Atributo	Descripción
+id	Identificador único del detalle del pedido.
+pedido_id	Relación con el modelo Pedido.
+producto_id	Relación con el modelo Producto.
+cantidad	Cantidad de productos solicitados.
+precio_unitario	Precio unitario del producto en el momento del pedido.
+precio_total	Precio total por este detalle (cantidad * precio_unitario).
+descuento	Descuento aplicado a este producto en el pedido.
+
+Sugerencias adicionales:
+
+Estado del Producto: En caso de devoluciones, cambios, etc.
+Fecha de Creación: Para llevar un registro de cuándo se creó el detalle.
+
+4. Modelo Pago
+El modelo Pago es crucial para la integración con una pasarela de pagos. Aquí algunos atributos adicionales y recomendaciones:
+
+Atributo	Descripción
+id	Identificador único del pago.
+pedido_id	Relación con el modelo Pedido (a qué pedido corresponde este pago).
+monto	Monto del pago realizado.
+metodo_pago	Método de pago (tarjeta de crédito, PayPal, etc.).
+estado	Estado del pago (pendiente, completado, fallido, reembolsado, etc.).
+referencia_pago	Referencia única o ID proporcionado por la pasarela de pagos.
+fecha_pago	Fecha en que se realizó el pago.
+detalles	Información adicional o respuesta de la pasarela de pagos.
+
+
+
+Microservicio de Gestión de Productos y Categorías
+---------------------------------------------------
+Producto       Categoria     Reseña
+| id          | id          | id
+| nombre      | nombre      | producto_id
+| descripcion | descripcion | usuario_id
+| precio      | ...         | comentario
+| stock       | ...         | calificacion
+| categoria_id|             | ...
+
+Microservicio de Carrito y Resumen de Compra
+---------------------------------------------------
+Carrito        DetalleCarrito
+| id          | id
+| usuario_id  | carrito_id
+| fecha       | producto_id
+| ...         | cantidad
+              | ...
+
+Microservicio de Gestión de Promociones y Administración
+---------------------------------------------------
+Promocion      Administrador   ProductoPromocion  CategoriaPromocion
+| id          | id            | id               | id
+| codigo      | nombre        | producto_id      | categoria_id
+| descripcion | email         | promocion_id     | promocion_id
+| tipo_descuento | ...       | ...              | ...
+| valor_descuento|
+| fecha_inicio |
+| fecha_fin    |
+| activo       |
+| admin_id     |
