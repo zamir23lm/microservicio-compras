@@ -1,12 +1,14 @@
 const express = require('express');
 const axios = require('axios');
-const { swaggerUi, swaggerDocs } = require('./swagger');
+const { swaggerUi, swaggerDocs } = require('./swagger');  // Asegúrate de que la ruta a swagger.js sea correcta
 
 const app = express();
 const PORT = 4000;
 
 app.use(express.json());
 
+// Ruta para Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Endpoints de la API
 /**
@@ -44,10 +46,10 @@ app.get('/', (req, res) => {
  *               descripcion:
  *                 type: string
  *                 description: Descripción de la categoría
- *             example:  // Mover el ejemplo aquí
- *               adminId: 1
- *               nombre: "Categoría de Prueba"
- *               descripcion: "Descripción de la categoría de prueba."
+ *           example:  
+ *             adminId: 1
+ *             nombre: "Categoría de Prueba"
+ *             descripcion: "Descripción de la categoría de prueba."
  *     responses:
  *       200:
  *         description: Categoría creada exitosamente
@@ -56,40 +58,28 @@ app.get('/', (req, res) => {
  *       500:
  *         description: Error interno del servidor
  */
-
 app.post('/api/orquestador/categorias', async (req, res) => {
-    const { adminId, nombre, descripcion } = req.body;
-
-    console.log(`Recibiendo solicitud para adminId: ${adminId}, nombre: ${nombre}, descripcion: ${descripcion}`);
-    try {
-        const adminResponse = await axios.get(`http://flask-backend:5000/admin/${adminId}`);
-        console.log(`Respuesta del servicio de administrador:`, adminResponse.data);
-        
-        if (adminResponse.status === 200) {
-            const adminData = adminResponse.data;
-            console.log(`Administrador encontrado: ${adminData.nombre}`);
-
-            const categoriaResponse = await axios.post('http://spring-backend:8081/api/categoria/postear', {
-                nombre: nombre,
-                descripcion: descripcion
-            });
-
-            res.status(categoriaResponse.status).json({
-                message: 'Categoría creada exitosamente',
-                data: categoriaResponse.data
-            });
-        } else {
-            res.status(404).json({ message: 'Administrador no encontrado' });
-        }
-    } catch (error) {
-        console.error(`Error al buscar administrador o crear categoría:`, error);
-
-        if (error.response && error.response.status === 404) {
-            res.status(404).json({ message: 'Administrador no encontrado' });
-        } else {
-            res.status(500).json({ message: 'Error interno del servidor' });
-        }
+  const { adminId, nombre, descripcion } = req.body;
+  
+  try {
+    const adminResponse = await axios.get(`http://flask-backend:5000/admin/${adminId}`);
+    
+    if (adminResponse.status === 200) {
+      const categoriaResponse = await axios.post('http://spring-backend:8081/api/categoria/postear', {
+        nombre,
+        descripcion
+      });
+      
+      res.status(categoriaResponse.status).json({
+        message: 'Categoría creada exitosamente',
+        data: categoriaResponse.data
+      });
+    } else {
+      res.status(404).json({ message: 'Administrador no encontrado' });
     }
+  } catch (error) {
+    res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+  }
 });
 
 /**
@@ -124,13 +114,13 @@ app.post('/api/orquestador/categorias', async (req, res) => {
  *               categoriaId:
  *                 type: integer
  *                 description: ID de la categoría a la que pertenece el producto
- *             example:
- *               adminId: 1
- *               nombre: "Producto de Ejemplo"
- *               descripcion: "Descripción del producto de ejemplo."
- *               precio: 29.99
- *               stock: 100
- *               categoriaId: 2
+ *           example:
+ *             adminId: 1
+ *             nombre: "Producto de Ejemplo"
+ *             descripcion: "Descripción del producto de ejemplo."
+ *             precio: 29.99
+ *             stock: 100
+ *             categoriaId: 2
  *     responses:
  *       200:
  *         description: Producto creado exitosamente
@@ -139,42 +129,31 @@ app.post('/api/orquestador/categorias', async (req, res) => {
  *       500:
  *         description: Error interno del servidor
  */
-app.post('/api/orquestador/producto', async(req, res) => {
-    const {adminId, nombre, descripcion, precio, stock, categoriaId} = req.body;
-    console.log("Recibiendo informacion");
-    try{
-        const adminResponse = await axios.get(`http://flask-backend:5000/admin/${adminId}`)
-        console.log("Respuesta del microservicio administrador", adminResponse.data);
-        if(adminResponse.status ===200){
-            const adminData = adminResponse.data;
-            const productoResponse = await axios.post('http://spring-backend:8081/api/producto/postear', {
-                nombre:nombre,
-                descripcion:descripcion,
-                precio:precio,
-                stock:stock,
-                categoriaId:categoriaId
-                
-            });
-            res.status(productoResponse.status).json({
-                message:'Producto creado exitosamente',
-                data:productoResponse.data
-            });
-        }else{
-            res.status(404).json({message:'Administrador no encontrado'});
-        }
-    }catch(error){
-        console.error('Error al buscar al administrador o al momento de crear el producto', error);
-        if (error.response) {
-            if (error.response.status === 404) {
-                res.status(404).json({ message: 'Administrador no encontrado' });
-            } else {
-                res.status(error.response.status).json({ message: 'Error en la creación del producto', error: error.message });
-            }
-        } else {
-            res.status(500).json({ message: 'Error interno en el servidor' });
-        }
+app.post('/api/orquestador/producto', async (req, res) => {
+  const { adminId, nombre, descripcion, precio, stock, categoriaId } = req.body;
+  
+  try {
+    const adminResponse = await axios.get(`http://flask-backend:5000/admin/${adminId}`);
+    
+    if (adminResponse.status === 200) {
+      const productoResponse = await axios.post('http://spring-backend:8081/api/producto/postear', {
+        nombre,
+        descripcion,
+        precio,
+        stock,
+        categoriaId
+      });
+      
+      res.status(productoResponse.status).json({
+        message: 'Producto creado exitosamente',
+        data: productoResponse.data
+      });
+    } else {
+      res.status(404).json({ message: 'Administrador no encontrado' });
     }
-
+  } catch (error) {
+    res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+  }
 });
 
 /**
@@ -196,9 +175,9 @@ app.post('/api/orquestador/producto', async(req, res) => {
  *               categoriaId:
  *                 type: integer
  *                 description: ID de la categoría a eliminar
- *             example:
- *               adminId: 1
- *               categoriaId: 3
+ *           example:
+ *             adminId: 1
+ *             categoriaId: 3
  *     responses:
  *       200:
  *         description: Categoría eliminada correctamente
@@ -207,31 +186,25 @@ app.post('/api/orquestador/producto', async(req, res) => {
  *       500:
  *         description: Error interno del servidor
  */
-app.delete('/api/orquestador/categoria/eliminar/', async(req, res)=>{
-    const{adminId, categoriaId} = req.body;
-    try{
-        const adminResponse = await axios.get(`http://flask-backend:5000/admin/${adminId}`);
-        if(adminResponse.status === 200){
-            const categoriaResponse = await axios.delete(`http://spring-backend:8081/api/categoria/${categoriaId}`)
-            res.status(categoriaResponse.status).json({
-                message:"Categoria eliminada correctamente",
-                data:categoriaResponse.data
-            });
-        }else{
-            res.status(404).json({message:'Administrador no encontrado'});
-        }
+app.delete('/api/orquestador/categoria/eliminar', async (req, res) => {
+  const { adminId, categoriaId } = req.body;
+  
+  try {
+    const adminResponse = await axios.get(`http://flask-backend:5000/admin/${adminId}`);
+    
+    if (adminResponse.status === 200) {
+      const categoriaResponse = await axios.delete(`http://spring-backend:8081/api/categoria/${categoriaId}`);
+      
+      res.status(categoriaResponse.status).json({
+        message: 'Categoría eliminada correctamente',
+        data: categoriaResponse.data
+      });
+    } else {
+      res.status(404).json({ message: 'Administrador no encontrado' });
     }
-    catch(error){
-        if(error.response){
-            if(error.response.status ===404){
-                res.status(404).json({message:'Administrador no encontrado'});
-            }else{
-                res.status(error.response.status).json({message:'Error al eliminar la categoría', error: error.message});
-            }
-        }else{
-            res.status(500).json({message:'Error interno del microservicio orquestador'});
-        }
-    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+  }
 });
 
 /**
@@ -253,9 +226,9 @@ app.delete('/api/orquestador/categoria/eliminar/', async(req, res)=>{
  *               productoId:
  *                 type: integer
  *                 description: ID del producto a eliminar
- *             example:
- *               adminId: 1
- *               productoId: 42
+ *           example:
+ *             adminId: 1
+ *             productoId: 42
  *     responses:
  *       200:
  *         description: Producto eliminado correctamente
@@ -264,35 +237,27 @@ app.delete('/api/orquestador/categoria/eliminar/', async(req, res)=>{
  *       500:
  *         description: Error interno del servidor
  */
-app.delete('/api/orquestador/producto/eliminar/', async(req, res)=>{
-    const{adminId, productoId} = req.body;
-    try{
-        const adminResponse = await axios.get(`http://flask-backend:5000/admin/${adminId}`);
-        if(adminResponse.status === 200){
-            const productoResponse = await axios.delete(`http://spring-backend:8081/api/producto/${productoId}`)
-            res.status(productoResponse.status).json({
-                message:"Producto eliminado correctamente",
-                data:productoResponse.data
-            });
-        }else{
-            res.status(404).json({message:'Administrador no encontrado'});
-        }
+app.delete('/api/orquestador/producto/eliminar', async (req, res) => {
+  const { adminId, productoId } = req.body;
+  
+  try {
+    const adminResponse = await axios.get(`http://flask-backend:5000/admin/${adminId}`);
+    
+    if (adminResponse.status === 200) {
+      const productoResponse = await axios.delete(`http://spring-backend:8081/api/producto/${productoId}`);
+      
+      res.status(productoResponse.status).json({
+        message: 'Producto eliminado correctamente',
+        data: productoResponse.data
+      });
+    } else {
+      res.status(404).json({ message: 'Administrador no encontrado' });
     }
-    catch(error){
-        if(error.response){
-            if(error.response.status ===404){
-                res.status(404).json({message:'Administrador no encontrado'});
-            }else{
-                res.status(error.response.status).json({message:'Error al eliminar el producto', error: error.message});
-            }
-        }else{
-            res.status(500).json({message:'Error interno del microservicio orquestador'});
-        }
-    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+  }
 });
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
 
 app.listen(PORT, () => {
-    console.log(`Orquestador de microservicios escuchando en el puerto ${PORT}`);
+  console.log(`Orquestador de microservicios escuchando en el puerto ${PORT}. Documentación disponible en http://localhost:${PORT}/api-docs`);
 });
