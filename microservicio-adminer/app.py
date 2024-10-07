@@ -238,14 +238,31 @@ def login():
     responses:
       200:
         description: Inicio de sesión exitoso
+        schema:
+          properties:
+            id:
+              type: integer
+            nombre:
+              type: string
+            email:
+              type: string
       401:
         description: Credenciales inválidas
     """
     data = request.get_json()
     admin = Administrador.query.filter_by(email=data['email']).first()
+    
     if admin is None or admin.password != data['password']:
         return jsonify({"message": "Credenciales inválidas"}), 401
-    return jsonify({"message": "Inicio de sesión exitoso"}), 200
+
+    # Devolver los atributos del administrador en la respuesta
+    return jsonify({
+        "message": "Inicio de sesión exitoso",
+        "id": admin.id,
+        "nombre": admin.nombre,
+        "email": admin.email
+    }), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
