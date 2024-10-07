@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');  // Importa el middleware CORS
+const cors = require('cors');
 const app = express();
 
 // Configuración de CORS
@@ -15,16 +15,8 @@ app.use(cors({
 // Manejar solicitudes preflight (OPTIONS)
 app.options('*', cors());  // Permitir solicitudes preflight de todos los orígenes
 
-// Asegurar que las cabeceras CORS están presentes en todas las respuestas
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');  // Permitir cualquier origen
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
-
 // Middleware para manejar JSON en las solicitudes
-app.use(express.json()); 
+app.use(express.json());
 
 // Importación de controladores
 const CarritoController = require('./src/carrito/controllers/CarritoController');
