@@ -1,9 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const { swaggerUi, swaggerDocs } = require('./swagger');  // Asegúrate de que la ruta a swagger.js sea correcta
+const cors = require('cors'); 
 
 const app = express();
 const PORT = 4000;
+app.use(cors());
 
 app.use(express.json());
 
