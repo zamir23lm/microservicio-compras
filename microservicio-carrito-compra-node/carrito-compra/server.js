@@ -3,11 +3,12 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 const cors = require('cors');  // Importa el middleware CORS
 const app = express();
+app.use(cors());  // Esto habilita CORS para cualquier origen
+
 const CarritoController = require('./src/carrito/controllers/CarritoController');
 const DetalleCarritoController = require('./src/detalleCarrito/controllers/DetalleCarritoController');
 const { swaggerUi, swaggerDocs } = require('./swagger');
 
-app.use(cors());  // Esto habilita CORS para cualquier origen
 
 app.use(express.json()); 
 
