@@ -10,16 +10,13 @@ docker-volume/
 volumes/
 logs/
 db_data/
-node_modules/
 __pycache__/
 *.pyc
 
 # Ignorar el archivo de configuración de Docker
 docker-compose.override.yml
 
-# Ignorar archivos relacionados con virtualenvs
 venv/
-.env
 
 # Ignorar archivos temporales de sistema operativo
 .DS_Store
