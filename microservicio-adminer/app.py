@@ -6,11 +6,7 @@ from flasgger import Swagger
 from flask_cors import CORS  
 
 app = Flask(__name__)
-app.config.from_object(Config)
-
-CORS(app)  
-
-app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.config.from_object(Config)
 
 # Inicializar la base de datos
