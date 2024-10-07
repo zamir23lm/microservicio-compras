@@ -27,6 +27,16 @@ const { swaggerUi, swaggerDocs } = require('./swagger');
 app.get('/', (req, res) => {
   res.json({ message: 'Bienvenido a mi API' });
 });
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);  // Log de método y URL de la solicitud
+  next();
+});
+
+app.post('/api/carrito/postear', (req, res) => {
+  console.log('Solicitud recibida en /api/carrito/postear:', req.body);  // Log del cuerpo de la solicitud
+  res.json({ message: 'Carrito creado exitosamente' });
+});
+
 
 // Rutas de carrito
 app.post('/api/carrito/postear', CarritoController.createCarrito);
