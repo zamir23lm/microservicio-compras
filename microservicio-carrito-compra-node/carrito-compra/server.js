@@ -4,21 +4,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
 
-// Configuración de CORS
-app.use(cors({
-  origin: '*',  // Permite cualquier origen
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Métodos permitidos
-  allowedHeaders: ['Content-Type', 'Authorization'],  // Cabeceras permitidas
-  credentials: true  // Permitir uso de credenciales si es necesario
-}));
+const corsOptions = {
+  origin: "*",
+  methods: "GET,POST,PUT,DELETE",
+};
+app.use(cors(corsOptions));
 
-// Manejar solicitudes preflight (OPTIONS)
-app.options('*', cors());  // Permitir solicitudes preflight de todos los orígenes
 
-// Middleware para manejar JSON en las solicitudes
 app.use(express.json());
 
-// Importación de controladores
 const CarritoController = require('./src/carrito/controllers/CarritoController');
 const DetalleCarritoController = require('./src/detalleCarrito/controllers/DetalleCarritoController');
 const { swaggerUi, swaggerDocs } = require('./swagger');
